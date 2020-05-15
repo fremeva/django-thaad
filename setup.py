@@ -6,6 +6,7 @@ setup(
     author_email="lmoncarisg@gmail.com",
     description="Provide utils to intercept and save/redirect requests",
     long_description=open("README.md").read(),
+    long_description_content_type='text/markdown',
     packages=[
         "interceptor"
     ],
@@ -15,8 +16,11 @@ setup(
         'djangorestframework==3.11.0',
     ],
     classifiers=[
-        "Development Status :: 3 - Beta",
+        "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Framework :: Django :: 3.0",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
