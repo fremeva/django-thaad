@@ -28,14 +28,15 @@ class InterceptedRequest(models.Model):
     headers = models.TextField(null=True, blank=True)
     content_type = models.CharField(max_length=30, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
-    session = models.ForeignKey('InterceptorSession', null=True, blank=True, on_delete=models.CASCADE)
+    session = models.ForeignKey('InterceptorSession', null=True, blank=True, on_delete=models.CASCADE,
+                                related_name='requests')
 
     def __str__(self):
         return f'[{self.method}] {self.created_at}'
 
 
 class InterceptedFile(models.Model):
-    request = models.ForeignKey(InterceptedRequest, on_delete=models.CASCADE)
+    request = models.ForeignKey(InterceptedRequest, on_delete=models.CASCADE, related_name='files')
     parameter = models.CharField(max_length=250)
     filename = models.CharField(max_length=250)
     size = models.FloatField(null=True, blank=True)

@@ -1,8 +1,10 @@
 import json
 
 from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
 
 
+@deconstructible
 class JSONFormatValidator:
     def __init__(self, allow_null=False):
         self.allow_null = allow_null

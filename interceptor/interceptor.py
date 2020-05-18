@@ -88,7 +88,7 @@ class HttpInterceptor(BaseInterceptor):
 
     def response_data(self):
         return {
-            "data": {'status': 'You have send a request, but we encorage you to create your own sessions!'},
+            "data": {'status': 'You have sent a request, but we encourage you to create your own sessions!'},
             "status": HTTP_200_OK,
             "headers": {}
         }
