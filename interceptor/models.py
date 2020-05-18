@@ -53,6 +53,7 @@ class InterceptorSession(models.Model):
     requires_authentication = models.BooleanField(default=False)
     saves_files = models.BooleanField(default=False)
     session_token = models.CharField(max_length=24, null=True, blank=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('short_name', 'user')
