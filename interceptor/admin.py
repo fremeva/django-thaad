@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 
 # Register your models here.
@@ -43,13 +44,19 @@ class InterceptorSessionModelAdmin(admin.ModelAdmin):
         return self.list_display
 
     def get_fields(self, request, obj=None):
-        return ['short_name', 'active', 'requires_authentication', 'saves_files', 'session_token']
+        fields = ['short_name', 'active', 'requires_authentication', 'saves_files', 'session_token']
+
+        if settings.DEBUG:
+            fields.append('user')
+
+        return fields
 
     def get_readonly_fields(self, request, obj=None):
         return ('session_token', )
 
     def save_model(self, request, obj, form, change):
-        obj.user = request.user
+        if not settings.DEBUG or obj.user is None:
+            obj.user = request.user
         obj.save()
 
     def get_queryset(self, request):

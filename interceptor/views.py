@@ -80,9 +80,9 @@ class HTTPInterceptorView(APIView):
                 path=self.interceptor.path,
                 method=request.method,
                 params=json.dumps(request.query_params),
-                data=self.interceptor.data,
+                data=json.dumps(self.interceptor.data),
                 metadata=json.dumps(self.interceptor.meta),
-                headers=dict(request.headers),
+                headers=json.dumps(dict(request.headers)),
                 content_type=self.interceptor.content_type,
                 session=self.interceptor.session
             )
