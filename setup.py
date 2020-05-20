@@ -8,7 +8,8 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type='text/markdown',
     packages=[
-        "interceptor"
+        "interceptor",
+        "interceptor.api",
     ],
     include_package_data=True,
     install_requires=[
