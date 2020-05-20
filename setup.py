@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name="django-thaad",
-    version='0.1.0',
+    version='1.0.0',
     author="Luis Moncaris",
     author_email="lmoncarisg@gmail.com",
     description="Provide utils to intercept and save/redirect requests",
