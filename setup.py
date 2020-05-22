@@ -1,4 +1,6 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+
 setup(
     name="django-thaad",
     version='1.0.1',
@@ -7,10 +9,7 @@ setup(
     description="Provide utils to intercept and save/redirect requests",
     long_description=open("README.md").read(),
     long_description_content_type='text/markdown',
-    packages=[
-        "interceptor",
-        "interceptor.api",
-    ],
+    packages=find_packages('.', exclude=['test', '*.test', 'docs', 'example', 'media']),
     include_package_data=True,
     install_requires=[
         'Django>=3.0',
