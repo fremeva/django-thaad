@@ -30,6 +30,7 @@ class InterceptedRequest(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     session = models.ForeignKey('InterceptorSession', null=True, blank=True, on_delete=models.CASCADE,
                                 related_name='requests')
+    matched_response = models.ForeignKey('InterceptorMockResponse', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'[{self.method}] {self.created_at}'

@@ -1,3 +1,4 @@
+import re
 from django.db.models import Q
 from rest_framework.status import HTTP_200_OK
 from rest_framework.utils import json
@@ -111,7 +112,7 @@ class HttpSessionInterceptor(HttpInterceptor):
         super(HttpSessionInterceptor, self).__init__(request, user=user)
 
     def authenticate(self):
-        token = self.headers.get('AUTHORIZATION')
+        token = self.headers.get('AUTHORIZATION', '')
         if len(token.split(' ')) > 1:
             token = token.split(' ')[-1]
 
@@ -128,7 +129,8 @@ class HttpSessionInterceptor(HttpInterceptor):
 
     def set_path(self, path):
         session_name = self.session.short_name
-        self.path = path.replace(f'/{session_name}', '') if session_name in path else path
+        regex = rf'.*\/{session_name}(?<!\/)'
+        self.path = re.sub(regex, '', path)
 
     def response_data(self):
         mocks = self.session.mocks
@@ -139,7 +141,8 @@ class HttpSessionInterceptor(HttpInterceptor):
             return {
                 "data": json.loads(mock.response_body),
                 "status": mock.status_code,
-                "headers": headers
+                "headers": headers,
+                "mock": mock
             }
 
         return super(HttpSessionInterceptor, self).response_data()

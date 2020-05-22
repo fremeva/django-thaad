@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name="django-thaad",
-    version='1.0.0',
+    version='1.0.1',
     author="Luis Moncaris",
     author_email="lmoncarisg@gmail.com",
     description="Provide utils to intercept and save/redirect requests",
@@ -15,6 +15,7 @@ setup(
     install_requires=[
         'Django>=3.0',
         'djangorestframework==3.11.0',
+        'django-cors-headers==3.3.0'
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

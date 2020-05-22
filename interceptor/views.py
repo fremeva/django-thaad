@@ -1,6 +1,6 @@
 import json
 from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_200_OK
 from rest_framework.views import APIView
 
 from interceptor.interceptor import HttpSessionInterceptor, HttpInterceptor, SessionNotFoundError
@@ -22,6 +22,17 @@ class HTTPInterceptorView(APIView):
             return super(HTTPInterceptorView, self).__getattr__(item)
         except AttributeError:
             raise AttributeError(item)
+
+    def options(self, request, *args, **kwargs):
+        # TODO: Check cors and if cors do not intercept here
+        cors = False
+        if cors:
+            if self.metadata_class is None:
+                return self.http_method_not_allowed(request, *args, **kwargs)
+            data = self.metadata_class().determine_metadata(request, self)
+            return Response(data, status=HTTP_200_OK)
+        else:
+            return self.intercept(request, *args, **kwargs)
 
     def get_interceptor_class(self):
         assert self.interceptor_class is not None, (
@@ -138,3 +149,15 @@ class HTTPSessionInterceptorView(HTTPInterceptorView):
     def create_intercepted_files(self, request, files):
         for key, file in files.items():
             self.create_intercepted_file(request, key, file, session=self.interceptor.session)
+
+    def build_response(self, request):
+        response = self.interceptor.response_data()
+
+        request.matched_response = response.get('mock')
+        request.save()
+
+        return Response(
+            data=response.get('data'),
+            status=response.get('status'),
+            headers=response.get('headers')
+        )
