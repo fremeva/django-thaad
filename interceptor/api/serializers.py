@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from interceptor.api.fields import JSONTextField
-from interceptor.models import InterceptedRequest, InterceptorMockResponse
+from interceptor.models import InterceptedRequest, InterceptorMockResponse, InterceptorSession
 from rest_framework.status import HTTP_200_OK
 
 
@@ -53,3 +54,19 @@ class InterceptedRequestModelSerializer(serializers.ModelSerializer):
             "status_code": HTTP_200_OK,
             "headers": {}
         }
+
+
+class InterceptorSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InterceptorSession
+        fields = (
+            'id',
+            'short_name',
+            'requires_authentication',
+            'saves_files',
+        )
+
+    def validate_short_name(self, data):
+        if InterceptorSession.objects.filter(user=self.context['request'].user, short_name=data).exists():
+            raise ValidationError(f'A session with name {data} already exists')
+        return data

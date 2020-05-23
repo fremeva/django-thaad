@@ -70,6 +70,7 @@ class InterceptorSession(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        is_new = not self.id
         if not self.short_name:
             exists = True
             while exists:
@@ -78,6 +79,8 @@ class InterceptorSession(models.Model):
 
             self.short_name = short_name
         super(InterceptorSession, self).save(force_insert, force_update, using, update_fields)
+        if is_new:
+            self.generate_new_token()
 
     def generate_new_token(self):
         equal = True
