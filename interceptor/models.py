@@ -4,6 +4,7 @@ import random
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 from interceptor.choices import HTTP_REQUEST_METHODS
 from interceptor import validators
@@ -49,6 +50,7 @@ class InterceptedFile(models.Model):
 
 class InterceptorSession(models.Model):
     short_name = models.CharField(max_length=20, blank=True)
+    slug = models.SlugField(null=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=True)
     requires_authentication = models.BooleanField(default=False)
@@ -70,6 +72,7 @@ class InterceptorSession(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+
         is_new = not self.id
         if not self.short_name:
             exists = True
@@ -78,9 +81,15 @@ class InterceptorSession(models.Model):
                 exists = InterceptorSession.objects.filter(short_name=short_name, user=self.user).exists()
 
             self.short_name = short_name
+
+        self.generate_slug()
+
         super(InterceptorSession, self).save(force_insert, force_update, using, update_fields)
         if is_new:
             self.generate_new_token()
+
+    def generate_slug(self):
+        self.slug = slugify(self.short_name)
 
     def generate_new_token(self):
         equal = True

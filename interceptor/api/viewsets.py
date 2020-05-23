@@ -51,9 +51,9 @@ class InterceptedRequestModelListViewset(
 
         if 'session_id' in self.request.query_params:
             session_id = self.request.query_params.get('session_id')
-            return qs.filter(session_id__in=self.get_user_sessions().filter(id=session_id))
+            return qs.filter(session_id__in=self.get_user_sessions().filter(id=session_id)).order_by('created_at')
 
-        return qs.filter(session_id__in=self.get_user_sessions())
+        return qs.filter(session_id__in=self.get_user_sessions()).order_by('created_at')
 
 
 class InterceptorSessionViewset(AuthenticatorMixin, RendererHTMLOnDebugMixin, ModelViewSet):

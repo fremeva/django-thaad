@@ -9,5 +9,10 @@ app_name = 'interceptor'
 urlpatterns = [
     url(f'^api/{API_VERSION}/', include('interceptor.api.urls')),
     url('^interceptor/(.*)', HTTPInterceptorView.as_view()),
-    url(r'^s/(?P<session_name>[A-Za-z0-9]{1,20})/(.*)', HTTPSessionInterceptorView.as_view())  # Should remain last
+
+    url(
+        r'^s/(?P<session_name>[A-Za-z0-9\-\_]{1,20})/.*',
+        HTTPSessionInterceptorView.as_view(),
+        name='session_interceptor'
+    )
 ]

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="django-thaad",
-    version='1.0.3',
+    version='1.0.4',
     author="Luis Moncaris",
     author_email="lmoncarisg@gmail.com",
     description="Provide utils to intercept and save/redirect requests",

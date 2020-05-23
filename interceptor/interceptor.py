@@ -99,7 +99,7 @@ class HttpSessionInterceptor(HttpInterceptor):
     session = None
 
     def __init__(self, request, session_name, user=None):
-        query = Q(short_name=session_name)
+        query = Q(slug=session_name)
         if user:
             query &= Q(user=user)
 
@@ -128,7 +128,7 @@ class HttpSessionInterceptor(HttpInterceptor):
         return True
 
     def set_path(self, path):
-        session_name = self.session.short_name
+        session_name = self.session.slug
         regex = rf'.*\/{session_name}(?<!\/)'
         self.path = re.sub(regex, '', path)
 
