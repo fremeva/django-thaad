@@ -62,13 +62,12 @@ class HTTPInterceptorView(APIView):
         )
         return super(HTTPInterceptorView, self).initial(request, *args, **kwargs)
 
-    def build_response(self, request):
-        response = self.interceptor.response_data()
+    def build_response(self, data):
 
         return Response(
-            data=response.get('data'),
-            status=response.get('status'),
-            headers=response.get('headers')
+            data=data.get('data'),
+            status=data.get('status'),
+            headers=data.get('headers')
         )
 
     def create_intercepted_file(self, intercepted_request, param, file):
@@ -81,27 +80,28 @@ class HTTPInterceptorView(APIView):
 
         return instance
 
+    def perform_creation(self, request):
+        intercepted_request = InterceptedRequest.objects.create(
+            path=self.interceptor.path,
+            method=request.method,
+            params=json.dumps(request.query_params),
+            data=json.dumps(self.interceptor.data),
+            metadata=json.dumps(self.interceptor.meta),
+            headers=json.dumps(dict(request.headers)),
+            content_type=self.interceptor.content_type,
+            session=self.interceptor.session
+        )
+
+        self.create_intercepted_files(intercepted_request, self.interceptor.files)
+
+        return intercepted_request
+
     def intercept(self, request, *args, **kwargs):
         """
         Intercepts all request to main URL and save it on database.
         """
         if self.interceptor.can_perform_creation():
-
-            intercepted_request = InterceptedRequest.objects.create(
-                path=self.interceptor.path,
-                method=request.method,
-                params=json.dumps(request.query_params),
-                data=json.dumps(self.interceptor.data),
-                metadata=json.dumps(self.interceptor.meta),
-                headers=json.dumps(dict(request.headers)),
-                content_type=self.interceptor.content_type,
-                session=self.interceptor.session
-            )
-
-            self.create_intercepted_files(intercepted_request, self.interceptor.files)
-
-            return self.build_response(intercepted_request)
-
+            self.perform_creation(request)
         else:
             return Response(data={'error': 'Unauthorized'}, status=HTTP_401_UNAUTHORIZED)
 
@@ -156,8 +156,4 @@ class HTTPSessionInterceptorView(HTTPInterceptorView):
         request.matched_response = response.get('mock')
         request.save()
 
-        return Response(
-            data=response.get('data'),
-            status=response.get('status'),
-            headers=response.get('headers')
-        )
+        return super(HTTPSessionInterceptorView, self).build_response(response)
