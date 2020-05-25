@@ -64,6 +64,7 @@ class InterceptorSessionSerializer(serializers.ModelSerializer):
             'short_name',
             'requires_authentication',
             'saves_files',
+            'slug'
         )
 
     def validate_short_name(self, data):
